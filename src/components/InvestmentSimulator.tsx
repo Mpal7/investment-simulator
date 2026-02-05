@@ -40,7 +40,7 @@ export const InvestmentSimulator = () => {
                             IS
                         </div>
                         <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-700 to-indigo-500 bg-clip-text text-transparent hidden sm:block">
-                            {t.title}
+                            {t.appTitle}
                         </h1>
                     </div>
 
@@ -64,7 +64,7 @@ export const InvestmentSimulator = () => {
 
                     {/* Right Panel - Results */}
                     <div className="lg:col-span-8 h-full">
-                        <ResultsPanel result={results} />
+                        <ResultsPanel result={results} params={params} />
                     </div>
                 </div>
             </main>

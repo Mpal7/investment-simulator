@@ -2,6 +2,7 @@ export type Language = 'it' | 'en';
 
 export const translations = {
     it: {
+        appTitle: 'Investire mi renderà ricco?',
         title: 'Simulatore Piani di Accumulo (PAC)',
         initialCapital: 'Capitale Iniziale',
         monthlyContribution: 'Contributo Mensile (PAC)',
@@ -38,8 +39,19 @@ export const translations = {
             efficiency: 'Efficienza',
             totalContributedTable: 'Totale Versato',
         },
+        summary: {
+            title: 'Riepilogo Investimento',
+            intro: 'In {years} anni, avrai versato un totale di {contributed}.',
+            grossGrowth: 'Crescita Lorda:',
+            grossGrowthText: 'Il tuo capitale cresce fino a un valore finale netto di {netBalance}.',
+            netProfit: 'Profitto Netto:',
+            netProfitText: 'Dopo i costi di gestione ({fees}) e le tasse ({tax}), il tuo guadagno effettivo è {netProfit}.',
+            inflationTitle: 'Attenzione Inflazione',
+            inflationText: 'Con un tasso di inflazione medio del {inflation}, il tuo capitale futuro avrà il potere d\'acquisto di {realBalance} di oggi. Il tuo aumento di ricchezza reale è effettivamente {realGain}.',
+        },
     },
     en: {
+        appTitle: 'Will investing make me rich?',
         title: 'Investment Growth Simulator',
         initialCapital: 'Initial Capital',
         monthlyContribution: 'Monthly Contribution',
@@ -75,6 +87,16 @@ export const translations = {
             yield: 'Yield',
             efficiency: 'Efficiency',
             totalContributedTable: 'Total Contributed',
+        },
+        summary: {
+            title: 'Investment Summary',
+            intro: 'In {years} years, you will have contributed a total of {contributed}.',
+            grossGrowth: 'Gross Growth:',
+            grossGrowthText: 'Your capital grows to a net final value of {netBalance}.',
+            netProfit: 'Net Profit:',
+            netProfitText: 'After management costs ({fees}) and taxes ({tax}), your actual gain is {netProfit}.',
+            inflationTitle: 'Inflation Watch',
+            inflationText: 'At an average inflation rate of {inflation}, your future capital will have the purchasing power of {realBalance} today. Your real wealth increase is effectively {realGain}.',
         },
     },
 };

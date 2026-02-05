@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { InvestmentResult } from '../utils/finance';
+import { InvestmentResult, InvestmentParams } from '../utils/finance';
 import { useLanguage } from '../context/LanguageContext';
 import { formatCurrency, formatPercent } from '../utils/localization';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -9,9 +9,10 @@ import { TrendingUp, PieChart, Info, DollarSign } from 'lucide-react';
 
 type ResultsPanelProps = {
     result: InvestmentResult;
+    params: InvestmentParams;
 };
 
-export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result }) => {
+export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) => {
     const { t, language } = useLanguage();
 
     return (
@@ -58,6 +59,55 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result }) => {
                     color="emerald"
                     icon={<Info className="w-5 h-5 text-emerald-600" />}
                 />
+            </div>
+
+            {/* Investment Summary */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="flex items-center gap-2 mb-4">
+                    <span className="text-2xl">📈</span>
+                    <h3 className="text-lg font-bold text-slate-800">{t.summary.title}</h3>
+                </div>
+
+                <p className="text-slate-700 mb-4">
+                    {t.summary.intro
+                        .replace('{years}', params.years.toString())
+                        .replace('{contributed}', formatCurrency(result.totalContributed, language))
+                    }
+                </p>
+
+                <ul className="space-y-3 mb-4">
+                    <li>
+                        <span className="font-semibold text-slate-800">{t.summary.grossGrowth}</span>{' '}
+                        <span className="text-slate-700">
+                            {t.summary.grossGrowthText
+                                .replace('{netBalance}', formatCurrency(result.finalNominalBalance, language))
+                            }
+                        </span>
+                    </li>
+                    <li>
+                        <span className="font-semibold text-slate-800">{t.summary.netProfit}</span>{' '}
+                        <span className="text-slate-700">
+                            {t.summary.netProfitText
+                                .replace('{fees}', formatCurrency(result.totalFees, language))
+                                .replace('{tax}', formatCurrency(result.totalTax, language))
+                                .replace('{netProfit}', formatCurrency(result.netProfit, language))
+                            }
+                        </span>
+                    </li>
+                </ul>
+
+                <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r">
+                    <div className="flex gap-2">
+                        <span className="text-amber-600 font-semibold flex-shrink-0">⚠️ {t.summary.inflationTitle}</span>
+                        <span className="text-slate-700">
+                            {t.summary.inflationText
+                                .replace('{inflation}', formatPercent(params.inflationRate, language))
+                                .replace('{realBalance}', formatCurrency(result.finalRealBalance, language))
+                                .replace('{realGain}', formatCurrency(result.finalRealBalance - result.totalContributed, language))
+                            }
+                        </span>
+                    </div>
+                </div>
             </div>
 
             {/* Chart */}
