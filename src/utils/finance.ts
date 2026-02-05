@@ -50,8 +50,9 @@ export const calculateInvestmentGrowth = (params: InvestmentParams): InvestmentR
   const netAnnualRate = Math.max(0, annualReturn - annualFees) / 100;
   const grossAnnualRate = annualReturn / 100;
 
-  const monthlyRate = netAnnualRate / 12;
-  const monthlyGrossRate = grossAnnualRate / 12;
+  // Geometric monthly rate: (1 + r)^(1/12) - 1
+  const monthlyRate = Math.pow(1 + netAnnualRate, 1 / 12) - 1;
+  const monthlyGrossRate = Math.pow(1 + grossAnnualRate, 1 / 12) - 1;
 
   const totalMonths = years * 12;
 
