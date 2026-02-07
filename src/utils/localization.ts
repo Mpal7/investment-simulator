@@ -54,7 +54,7 @@ export const translations = {
             netProfitText: 'L\'imposta sulle plusvalenze ({tax}) viene applicata una sola volta all\'uscita. Il tuo capitale netto finale è {postTaxBalance} con un profitto netto di {netGrowth}.',
             inflationTitle: 'Attenzione Inflazione',
             inflationLoss: 'L\'inflazione e i costi stanno "mangiando" il tuo capitale: il tuo potere d\'acquisto finale ({realBalance}) sarà inferiore ai {contributed} versati. In termini reali, stai perdendo ricchezza.',
-            inflationGain: 'L\'investimento batte l\'inflazione: i tuoi {postTaxBalance} futuri varranno come {realBalance} di oggi. Hai generato un valore reale extra rispetto a quanto versato ({contributed}).'
+            inflationGain: 'L\'investimento batte l\'inflazione: i tuoi {postTaxBalance} futuri varranno come {realBalance} di oggi. Hai generato un valore reale extra rispetto a quanto versato.'
         },
     },
 
@@ -111,7 +111,7 @@ export const translations = {
             netProfitText: 'Capital gains tax ({tax}) is applied once at exit. Your final net balance is {postTaxBalance} with a net profit of {netGrowth}.',
             inflationTitle: 'Inflation Watch',
             inflationLoss: 'Inflation and fees are eroding your capital: your final purchasing power ({realBalance}) will be lower than the {contributed} contributed. You are losing wealth in real terms.',
-            inflationGain: 'The investment beats inflation: your future {postTaxBalance} will be worth {realBalance} today. You have generated real extra value compared to what you contributed ({contributed}).',
+            inflationGain: 'The investment beats inflation: your future {postTaxBalance} will be worth {realBalance} today. You have generated real extra value compared to what you contributed.',
         },
     },
 };
