@@ -25,7 +25,8 @@ export type InvestmentResult = {
   totalContributedNominal: number; // Sum of all contributions (nominal)
   totalContributedReal: number;    // Contributions in today's purchasing power
   totalStampDuty: number;          // Imposta di Bollo - actual cash outflow
-  opportunityCostVsNoFee: number;  // TER "cost" = what no-fee scenario would yield
+  opportunityCostVsNoFee: number; // TER "cost" = what no-fee scenario would yield
+  feesAsPercentOfPotentialProfit: number; // AGGIUNGI QUESTO // TER "cost" = what no-fee scenario would yield
   capitalGainsTax: number;         // 26% tax on (finalPreTax - contributions)
   breakdown: YearlyBreakdown;
 };
@@ -152,6 +153,11 @@ export const calculateInvestmentGrowth = (params: InvestmentParams): InvestmentR
   // This is NOT money paid out - it's unrealized gains you missed
   const opportunityCostVsNoFee = balanceNoFee - balance;
 
+  const potentialProfitNoFee = Math.max(0, balanceNoFee - totalContributed);
+  const feesAsPercentOfPotentialProfit = potentialProfitNoFee > 0
+    ? (opportunityCostVsNoFee / potentialProfitNoFee) * 100
+    : 0;
+
   return {
     finalNominalPreTax,
     finalNominalPostTax,
@@ -160,6 +166,7 @@ export const calculateInvestmentGrowth = (params: InvestmentParams): InvestmentR
     totalContributedReal,
     totalStampDuty,
     opportunityCostVsNoFee,
+    feesAsPercentOfPotentialProfit,
     capitalGainsTax,
     breakdown,
   };

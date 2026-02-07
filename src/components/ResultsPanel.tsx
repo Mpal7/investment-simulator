@@ -17,7 +17,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
 
     // Calculate net profit for display
     const netProfit = result.finalNominalPostTax - result.totalContributedNominal;
-
+    const isLosingWealth = result.finalRealPostTax < result.totalContributedNominal;
     return (
         <div className="flex flex-col gap-6 h-full">
             {/* Summary Cards */}
@@ -34,7 +34,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                     title={t.result.opportunityCost}
                     value={formatCurrency(result.opportunityCostVsNoFee, language)}
                     subtext={t.result.opportunityCostSubtext}
-                    subValue={formatPercent(result.opportunityCostVsNoFee / result.totalContributedNominal * 100, language)}
+                    subValue={formatPercent(result.feesAsPercentOfPotentialProfit, language)}
                     color="amber"
                     icon={<PieChart className="w-5 h-5 text-amber-600" />}
                 />
@@ -98,24 +98,42 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                             }
                         </span>
                     </li>
+                    {params.stampDutyEnabled && (
+                        <li>
+                            <span className="font-semibold text-slate-800">{t.summary.stampDuty}</span>{' '}
+                            <span className="text-slate-700">
+                                {t.summary.stampDutyText
+                                    .replace('{stampDuty}', formatCurrency(result.totalStampDuty, language))
+                                }
+                            </span>
+                        </li>
+                    )}
                     <li>
                         <span className="font-semibold text-slate-800">{t.summary.netProfit}</span>{' '}
                         <span className="text-slate-700">
                             {t.summary.netProfitText
                                 .replace('{tax}', formatCurrency(result.capitalGainsTax, language))
                                 .replace('{postTaxBalance}', formatCurrency(result.finalNominalPostTax, language))
+                                .replace('{netGrowth}', formatCurrency(netProfit, language))
                             }
                         </span>
                     </li>
                 </ul>
 
-                <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r">
+                <div className={`${isLosingWealth ? 'bg-red-50 border-red-400' : 'bg-emerald-50 border-emerald-400'} border-l-4 p-4 rounded-r`}>
                     <div className="flex gap-2">
-                        <span className="text-amber-600 font-semibold flex-shrink-0">⚠️ {t.summary.inflationTitle}</span>
+                        <span className={`${isLosingWealth ? 'text-red-600' : 'text-emerald-600'} font-semibold flex-shrink-0`}>
+                            ⚠️ {t.summary.inflationTitle}
+                        </span>
                         <span className="text-slate-700">
-                            {t.summary.inflationText
-                                .replace('{inflation}', formatPercent(params.inflationRate, language))
-                                .replace('{realBalance}', formatCurrency(result.finalRealPostTax, language))
+                            {isLosingWealth
+                                ? t.summary.inflationLoss
+                                    .replace('{realBalance}', formatCurrency(result.finalRealPostTax, language))
+                                    .replace('{contributed}', formatCurrency(result.totalContributedNominal, language))
+                                : t.summary.inflationGain
+                                    .replace('{postTaxBalance}', formatCurrency(result.finalNominalPostTax, language))
+                                    .replace('{realBalance}', formatCurrency(result.finalRealPostTax, language))
+                                    .replace('{contributed}', formatCurrency(result.totalContributedNominal, language))
                             }
                         </span>
                     </div>
