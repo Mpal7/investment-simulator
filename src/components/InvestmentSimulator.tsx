@@ -18,11 +18,12 @@ export const InvestmentSimulator = () => {
         annualFees: 0.2, // TER
         taxRate: 26,
         inflationRate: 2,
+        stampDutyEnabled: false,
     });
 
     const results = useMemo(() => calculateInvestmentGrowth(params), [params]);
 
-    const updateParam = (key: keyof InvestmentParams, value: number) => {
+    const updateParam = (key: keyof InvestmentParams, value: number | boolean) => {
         setParams(prev => ({ ...prev, [key]: value }));
     };
 

@@ -7,7 +7,7 @@ import { Sliders, TrendingUp, DollarSign, Calendar, Percent } from 'lucide-react
 
 type InputPanelProps = {
     params: InvestmentParams;
-    onChange: (key: keyof InvestmentParams, value: number) => void;
+    onChange: (key: keyof InvestmentParams, value: number | boolean) => void;
 };
 
 export const InputPanel: React.FC<InputPanelProps> = ({ params, onChange }) => {
@@ -125,6 +125,23 @@ export const InputPanel: React.FC<InputPanelProps> = ({ params, onChange }) => {
                 unit="%"
                 icon={<Percent className="w-4 h-4" />}
             />
+
+            {/* Stamp Duty Toggle */}
+            <div className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <input
+                    type="checkbox"
+                    id="stampDutyToggle"
+                    checked={params.stampDutyEnabled}
+                    onChange={(e) => onChange('stampDutyEnabled', e.target.checked ? 1 : 0)}
+                    className="w-4 h-4 accent-amber-600 cursor-pointer"
+                />
+                <label
+                    htmlFor="stampDutyToggle"
+                    className="text-sm font-medium text-slate-700 cursor-pointer flex-1"
+                >
+                    {t.stampDuty}
+                </label>
+            </div>
         </div>
     );
 };

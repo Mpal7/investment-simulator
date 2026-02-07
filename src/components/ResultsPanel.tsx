@@ -15,45 +15,57 @@ type ResultsPanelProps = {
 export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) => {
     const { t, language } = useLanguage();
 
+    // Calculate net profit for display
+    const netProfit = result.finalNominalPostTax - result.totalContributedNominal;
+
     return (
         <div className="flex flex-col gap-6 h-full">
             {/* Summary Cards */}
             <div className="flex flex-wrap gap-4">
                 <SummaryCard
                     title={t.result.totalContributed}
-                    value={formatCurrency(result.totalContributed, language)}
+                    value={formatCurrency(result.totalContributedNominal, language)}
                     subtext=""
                     subValue=""
                     color="slate"
                     icon={<DollarSign className="w-5 h-5 text-slate-600" />}
                 />
                 <SummaryCard
-                    title={t.result.totalFees}
-                    value={formatCurrency(result.totalFees, language)}
-                    subtext={t.result.retainedByFund}
-                    subValue={formatPercent(result.totalFees / result.totalContributed * 100, language)}
-                    color="red"
-                    icon={<PieChart className="w-5 h-5 text-red-600" />}
+                    title={t.result.opportunityCost}
+                    value={formatCurrency(result.opportunityCostVsNoFee, language)}
+                    subtext={t.result.opportunityCostSubtext}
+                    subValue={formatPercent(result.opportunityCostVsNoFee / result.totalContributedNominal * 100, language)}
+                    color="amber"
+                    icon={<PieChart className="w-5 h-5 text-amber-600" />}
+                />
+                {params.stampDutyEnabled && (
+                    <SummaryCard
+                        title={t.result.totalStampDuty}
+                        value={formatCurrency(result.totalStampDuty, language)}
+                        subtext={t.result.stampDutySubtext}
+                        subValue={formatPercent(result.totalStampDuty / result.totalContributedNominal * 100, language)}
+                        color="amber"
+                        icon={<PieChart className="w-5 h-5 text-amber-600" />}
+                    />
+                )}
+                <SummaryCard
+                    title={t.result.capitalGainsTax}
+                    value={formatCurrency(result.capitalGainsTax, language)}
+                    subtext={t.result.capitalGainsTaxSubtext.replace('{taxRate}', formatPercent(params.taxRate, language))} subValue=""
+                    color="amber"
+                    icon={<PieChart className="w-5 h-5 text-amber-600" />}
                 />
                 <SummaryCard
-                    title={t.result.totalTax}
-                    value={formatCurrency(result.totalTax, language)}
-                    subtext=""
-                    subValue=""
-                    color="slate"
-                    icon={<PieChart className="w-5 h-5 text-slate-600" />}
-                />
-                <SummaryCard
-                    title={t.result.nominalBalance}
-                    value={formatCurrency(result.finalNominalBalance, language)}
+                    title={t.result.finalPostTax}
+                    value={formatCurrency(result.finalNominalPostTax, language)}
                     subtext={t.result.netGrowth}
-                    subValue={formatCurrency(result.netProfit, language)}
+                    subValue={formatCurrency(netProfit, language)}
                     color="indigo"
                     icon={<TrendingUp className="w-5 h-5 text-indigo-600" />}
                 />
                 <SummaryCard
                     title={t.result.realBalance}
-                    value={formatCurrency(result.finalRealBalance, language)}
+                    value={formatCurrency(result.finalRealPostTax, language)}
                     subtext={t.result.inflationAdjusted}
                     subValue=""
                     color="emerald"
@@ -71,7 +83,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                 <p className="text-slate-700 mb-4">
                     {t.summary.intro
                         .replace('{years}', params.years.toString())
-                        .replace('{contributed}', formatCurrency(result.totalContributed, language))
+                        .replace('{contributed}', formatCurrency(result.totalContributedNominal, language))
                     }
                 </p>
 
@@ -80,7 +92,9 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                         <span className="font-semibold text-slate-800">{t.summary.grossGrowth}</span>{' '}
                         <span className="text-slate-700">
                             {t.summary.grossGrowthText
-                                .replace('{netBalance}', formatCurrency(result.finalNominalBalance, language))
+                                .replace('{preTaxBalance}', formatCurrency(result.finalNominalPreTax, language))
+                                .replace('{opportunityCost}', formatCurrency(result.opportunityCostVsNoFee, language))
+                                .replace('{taxRate}', formatPercent(params.taxRate, language))
                             }
                         </span>
                     </li>
@@ -88,9 +102,8 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                         <span className="font-semibold text-slate-800">{t.summary.netProfit}</span>{' '}
                         <span className="text-slate-700">
                             {t.summary.netProfitText
-                                .replace('{fees}', formatCurrency(result.totalFees, language))
-                                .replace('{tax}', formatCurrency(result.totalTax, language))
-                                .replace('{netProfit}', formatCurrency(result.netProfit, language))
+                                .replace('{tax}', formatCurrency(result.capitalGainsTax, language))
+                                .replace('{postTaxBalance}', formatCurrency(result.finalNominalPostTax, language))
                             }
                         </span>
                     </li>
@@ -102,8 +115,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                         <span className="text-slate-700">
                             {t.summary.inflationText
                                 .replace('{inflation}', formatPercent(params.inflationRate, language))
-                                .replace('{realBalance}', formatCurrency(result.finalRealBalance, language))
-                                .replace('{realGain}', formatCurrency(result.finalRealBalance - result.totalContributed, language))
+                                .replace('{realBalance}', formatCurrency(result.finalRealPostTax, language))
                             }
                         </span>
                     </div>
@@ -121,7 +133,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
                                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                                 </linearGradient>
-                                <linearGradient id="colorGross" x1="0" y1="0" x2="0" y2="1">
+                                <linearGradient id="colorNoFee" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#f97316" stopOpacity={0.1} />
                                     <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
                                 </linearGradient>
@@ -138,29 +150,25 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                             <Tooltip
                                 content={({ active, payload, label }) => {
                                     if (active && payload && payload.length) {
-                                        // Custom Tooltip Order: Gross (Top) -> Net (Middle) -> Contributed (Bottom)
-                                        // Note: payload order depends on chart definition order usually, but we can find by dataKey
-                                        const gross = payload.find(p => p.dataKey === 'balanceGross');
-                                        const net = payload.find(p => p.dataKey === 'balance');
-                                        const contributed = payload.find(p => p.dataKey === 'contributions');
+                                        const noFee = payload.find(p => p.dataKey === 'balanceNoFee');
+                                        const net = payload.find(p => p.dataKey === 'balanceNominal');
+                                        const contributed = payload.find(p => p.dataKey === 'contributionsNominal');
 
                                         return (
                                             <div className="bg-white p-3 rounded-xl shadow-lg border border-slate-100 ring-1 ring-slate-900/5">
                                                 <p className="font-medium text-slate-500 mb-2">{`${t.table.year} ${label}`}</p>
                                                 <div className="flex flex-col gap-1.5 min-w-[200px]">
-                                                    {/* Top: Gross */}
-                                                    {gross && (
+                                                    {noFee && (
                                                         <div className="flex justify-between items-center text-sm">
                                                             <div className="flex items-center gap-2">
                                                                 <div className="w-2 h-2 rounded-full bg-orange-500" />
                                                                 <span className="text-slate-600">{t.table.grossBalance}</span>
                                                             </div>
                                                             <span className="font-mono font-semibold text-orange-600">
-                                                                {formatCurrency(Number(gross.value), language)}
+                                                                {formatCurrency(Number(noFee.value), language)}
                                                             </span>
                                                         </div>
                                                     )}
-                                                    {/* Middle: Net */}
                                                     {net && (
                                                         <div className="flex justify-between items-center text-sm">
                                                             <div className="flex items-center gap-2">
@@ -172,7 +180,6 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                                                             </span>
                                                         </div>
                                                     )}
-                                                    {/* Bottom: Contributed */}
                                                     {contributed && (
                                                         <div className="flex justify-between items-center text-sm pt-1.5 border-t border-slate-100">
                                                             <div className="flex items-center gap-2">
@@ -191,36 +198,36 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                                     return null;
                                 }}
                             />
-                            {/* Layer 1: Gross (Background) */}
+                            {/* Layer 1: No-Fee Balance (Background - shows opportunity cost) */}
                             <Area
                                 type="monotone"
-                                dataKey="balanceGross"
-                                stroke="#f97316" // Orange
+                                dataKey="balanceNoFee"
+                                stroke="#f97316"
                                 strokeWidth={1}
-                                strokeDasharray="0" // Solid line as requested
-                                fill="url(#colorGross)"
+                                strokeDasharray="0"
+                                fill="url(#colorNoFee)"
                                 fillOpacity={1}
                                 activeDot={{ r: 4, strokeWidth: 0, fill: '#f97316' }}
                                 name={t.table.grossBalance}
                             />
-                            {/* Layer 2: Net (Middle) */}
+                            {/* Layer 2: Nominal Balance (Middle - actual pre-tax value) */}
                             <Area
                                 type="monotone"
-                                dataKey="balance"
-                                stroke="#10b981" // Emerald
-                                strokeWidth={3} // Thicker
+                                dataKey="balanceNominal"
+                                stroke="#10b981"
+                                strokeWidth={3}
                                 fill="url(#colorNet)"
                                 fillOpacity={1}
                                 activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff', fill: '#10b981' }}
                                 name={t.table.balance}
                             />
-                            {/* Layer 3: Invested (Foreground/Bottom) */}
+                            {/* Layer 3: Contributions (Foreground/Bottom) */}
                             <Area
                                 type="monotone"
-                                dataKey="contributions"
-                                stroke="#64748b" // Slate
+                                dataKey="contributionsNominal"
+                                stroke="#64748b"
                                 strokeWidth={2}
-                                fill="#f1f5f9" // Very light slate fill or none if we want just lines? User said "Versato: A neutral, solid grey or deep navy"
+                                fill="#f1f5f9"
                                 fillOpacity={0.5}
                                 activeDot={{ r: 4, strokeWidth: 2, stroke: '#fff', fill: '#64748b' }}
                                 name={t.table.contributed}
@@ -242,13 +249,12 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                             <tr>
                                 <th className="px-6 py-4 font-semibold text-slate-600 whitespace-nowrap">{t.table.year}</th>
                                 <th className="px-6 py-4 font-semibold text-slate-600 whitespace-nowrap">{t.table.contributed}</th>
-                                <th className="px-6 py-4 font-semibold text-emerald-700 whitespace-nowrap text-right">{t.table.interest}</th>
                                 <th className="px-6 py-4 font-semibold text-indigo-700 whitespace-nowrap text-right">{t.table.balance}</th>
+                                <th className="px-6 py-4 font-semibold text-emerald-700 whitespace-nowrap text-right">{t.table.realValue}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {result.breakdown.map((row) => {
-                                const yieldPercent = (row.interest / row.contributions) * 100;
                                 return (
                                     <tr key={row.year} className="group hover:bg-indigo-50/30 transition-colors odd:bg-white even:bg-slate-50/50">
                                         <td className="px-6 py-4 font-medium text-slate-500 font-mono border-r border-slate-100/50">{row.year}</td>
@@ -258,28 +264,18 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                                             {formatCurrency(row.annualContribution, language)}
                                         </td>
 
-                                        {/* Profit & Yield */}
+                                        {/* Nominal Balance (Pre-Tax) */}
                                         <td className="px-6 py-4 text-right">
-                                            <div className="flex flex-col items-end gap-1">
-                                                <span className="font-bold font-mono text-emerald-600 block">
-                                                    +{formatCurrency(row.interest, language)}
-                                                </span>
-                                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                                                    {formatPercent(yieldPercent, language)} {t.table.yield}
-                                                </span>
-                                            </div>
+                                            <span className="font-bold font-mono text-indigo-700 text-base">
+                                                {formatCurrency(row.balanceNominal, language)}
+                                            </span>
                                         </td>
 
-                                        {/* Value Group (Net & Real) */}
+                                        {/* Real Balance (Pre-Tax, Inflation-Adjusted) */}
                                         <td className="px-6 py-4 text-right">
-                                            <div className="flex flex-col items-end gap-0.5">
-                                                <span className="font-bold font-mono text-indigo-700 text-base">
-                                                    {formatCurrency(row.balance, language)}
-                                                </span>
-                                                <span className="text-xs text-slate-400 font-mono" title={t.table.realValue}>
-                                                    {t.table.realValue}: {formatCurrency(row.balanceReal, language)}
-                                                </span>
-                                            </div>
+                                            <span className="font-mono text-emerald-600">
+                                                {formatCurrency(row.balanceReal, language)}
+                                            </span>
                                         </td>
                                     </tr>
                                 );
@@ -292,16 +288,16 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                 <div className="bg-slate-900 text-white p-4 shrink-0 flex flex-wrap justify-between items-center gap-4 text-sm shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-20">
                     <div className="flex flex-col">
                         <span className="text-slate-400 text-xs uppercase tracking-wider font-semibold">{t.table.totalContributedTable}</span>
-                        <span className="font-mono text-lg font-medium">{formatCurrency(result.totalContributed, language)}</span>
+                        <span className="font-mono text-lg font-medium">{formatCurrency(result.totalContributedNominal, language)}</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-emerald-400 text-xs uppercase tracking-wider font-semibold">{t.table.interest}</span>
-                        <span className="font-mono text-lg font-bold text-emerald-300">+{formatCurrency(result.netProfit, language)}</span>
+                        <span className="text-emerald-400 text-xs uppercase tracking-wider font-semibold">{t.result.netGrowth}</span>
+                        <span className="font-mono text-lg font-bold text-emerald-300">+{formatCurrency(netProfit, language)}</span>
                     </div>
                     <div className="flex flex-col text-right">
                         <span className="text-indigo-300 text-xs uppercase tracking-wider font-semibold">{t.table.efficiency}</span>
                         <span className="font-mono text-lg font-bold text-indigo-200">
-                            {formatPercent((result.netProfit / result.totalContributed) * 100, language)}
+                            {formatPercent((netProfit / result.totalContributedNominal) * 100, language)}
                         </span>
                     </div>
                 </div>
@@ -311,12 +307,12 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
 };
 
 const SummaryCard = ({ title, value, subtext, subValue, color, icon }: any) => {
-    // Map color to classes
     const colorClasses: Record<string, string> = {
         indigo: 'bg-indigo-50 border-indigo-100 text-indigo-900',
         emerald: 'bg-emerald-50 border-emerald-100 text-emerald-900',
         slate: 'bg-slate-50 border-slate-100 text-slate-900',
-        red: 'bg-red-50 border-red-100 text-red-900'
+        red: 'bg-red-50 border-red-100 text-red-900',
+        amber: 'bg-amber-50 border-amber-100 text-amber-900'
     };
 
     return (
