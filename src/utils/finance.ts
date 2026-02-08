@@ -28,6 +28,7 @@ export type InvestmentResult = {
   opportunityCostVsNoFee: number; // TER "cost" = what no-fee scenario would yield
   feesAsPercentOfPotentialProfit: number; // AGGIUNGI QUESTO // TER "cost" = what no-fee scenario would yield
   capitalGainsTax: number;         // 26% tax on (finalPreTax - contributions)
+  realProfit: number;
   breakdown: YearlyBreakdown;
 };
 
@@ -158,6 +159,8 @@ export const calculateInvestmentGrowth = (params: InvestmentParams): InvestmentR
     ? (opportunityCostVsNoFee / potentialProfitNoFee) * 100
     : 0;
 
+  const realProfit = finalRealPostTax - totalContributed;
+
   return {
     finalNominalPreTax,
     finalNominalPostTax,
@@ -168,6 +171,7 @@ export const calculateInvestmentGrowth = (params: InvestmentParams): InvestmentR
     opportunityCostVsNoFee,
     feesAsPercentOfPotentialProfit,
     capitalGainsTax,
+    realProfit,
     breakdown,
   };
 };

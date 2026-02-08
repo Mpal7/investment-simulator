@@ -14,6 +14,12 @@ type ResultsPanelProps = {
 
 export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) => {
     const { t, language } = useLanguage();
+    //bold constant
+    const renderBoldText = (text: string) => {
+        return text.split('**').map((part, index) =>
+            index % 2 === 1 ? <b key={index} className="text-slate-900 font-bold">{part}</b> : part
+        );
+    };
 
     // Calculate net profit for display
     const netProfit = result.finalNominalPostTax - result.totalContributedNominal;
@@ -66,8 +72,8 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                 <SummaryCard
                     title={t.result.realBalance}
                     value={formatCurrency(result.finalRealPostTax, language)}
-                    subtext={t.result.inflationAdjusted}
-                    subValue=""
+                    subtext={t.result.realProfit}
+                    subValue={formatCurrency(result.realProfit, language)}
                     color="emerald"
                     icon={<Info className="w-5 h-5 text-emerald-600" />}
                 />
@@ -126,15 +132,18 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result, params }) =>
                             ⚠️ {t.summary.inflationTitle}
                         </span>
                         <span className="text-slate-700">
-                            {isLosingWealth
-                                ? t.summary.inflationLoss
-                                    .replace('{realBalance}', formatCurrency(result.finalRealPostTax, language))
-                                    .replace('{contributed}', formatCurrency(result.totalContributedNominal, language))
-                                : t.summary.inflationGain
-                                    .replace('{postTaxBalance}', formatCurrency(result.finalNominalPostTax, language))
-                                    .replace('{realBalance}', formatCurrency(result.finalRealPostTax, language))
-                                    .replace('{contributed}', formatCurrency(result.totalContributedNominal, language))
-                            }
+                            {renderBoldText(
+                                isLosingWealth
+                                    ? t.summary.inflationLoss
+                                        .replace('{realBalance}', formatCurrency(result.finalRealPostTax, language))
+                                        .replace('{contributed}', formatCurrency(result.totalContributedNominal, language))
+                                        .replace('{realProfit}', formatCurrency(Math.abs(result.realProfit), language))
+                                    : t.summary.inflationGain
+                                        .replace('{postTaxBalance}', formatCurrency(result.finalNominalPostTax, language))
+                                        .replace('{realBalance}', formatCurrency(result.finalRealPostTax, language))
+                                        .replace('{contributed}', formatCurrency(result.totalContributedNominal, language))
+                                        .replace('{realProfit}', formatCurrency(result.realProfit, language))
+                            )}
                         </span>
                     </div>
                 </div>
