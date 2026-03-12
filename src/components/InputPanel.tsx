@@ -25,7 +25,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({ params, onChange }) => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-6 h-full overflow-y-auto">
+        <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-200 flex flex-col gap-6 h-full overflow-y-auto">
             <div className="flex items-center gap-2 mb-2">
                 <Sliders className="w-5 h-5 text-indigo-600" />
                 <h2 className="text-xl font-bold text-slate-800">{t.title}</h2>
@@ -86,7 +86,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({ params, onChange }) => {
                     step="0.1"
                     value={params.annualReturn}
                     onChange={(e) => handleChange('annualReturn', e.target.value)}
-                    className="w-full accent-indigo-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-indigo-600 h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer"
                 />
             </div>
 
@@ -127,7 +127,7 @@ export const InputPanel: React.FC<InputPanelProps> = ({ params, onChange }) => {
             />
 
             {/* Stamp Duty Toggle */}
-            <div className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <div className="flex items-center gap-3 p-3 bg-amber-100 border border-amber-300 rounded-lg shadow-sm">
                 <input
                     type="checkbox"
                     id="stampDutyToggle"
@@ -172,7 +172,7 @@ const InputGroup = ({
                 <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
                     {icon} {label}
                 </label>
-                <div className="flex items-center bg-slate-50 border border-slate-200 rounded-md px-2 py-1">
+                <div className="flex items-center bg-slate-100 border border-slate-300 rounded-md px-2 py-1.5 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-all">
                     <input
                         type="number"
                         value={isNaN(value) ? '' : value}
@@ -180,9 +180,9 @@ const InputGroup = ({
                             const val = parseFloat(e.target.value);
                             onChange(isNaN(val) ? 0 : val);
                         }}
-                        className="w-20 bg-transparent text-right font-mono text-sm focus:outline-none"
+                        className="w-24 bg-transparent text-right font-mono text-base font-bold text-slate-900 focus:outline-none placeholder:text-slate-400"
                     />
-                    <span className="text-xs text-slate-500 ml-1">{unit}</span>
+                    <span className="text-xs font-bold text-slate-600 ml-1.5">{unit}</span>
                 </div>
             </div>
             <input
@@ -195,7 +195,7 @@ const InputGroup = ({
                     const val = parseFloat(e.target.value);
                     onChange(isNaN(val) ? 0 : val);
                 }}
-                className="w-full accent-indigo-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                className="w-full accent-indigo-600 h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer"
             />
         </div>
     );
